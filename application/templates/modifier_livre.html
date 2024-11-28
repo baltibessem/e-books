@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modifier un Livre</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <!-- Barre de navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="/">Bibliothèque Numérique</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/bibliotheque">Bibliothèque des Livres</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="/mes_reservation">Mes Réservations</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/mes_emprunts">Mes Emprunts</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/login">Se connecter</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="container mt-5">
+      <h1>Modifier le Livre : {{ livre.titre }}</h1>
+      <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+          {{ form.titre.label }} {{ form.titre(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.auteur.label }} {{ form.auteur(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.genre.label }} {{ form.genre(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.annee_publication.label }} {{
+          form.annee_publication(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.ISBN.label }} {{ form.ISBN(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.statut.label }} {{ form.statut(class="form-control") }}
+        </div>
+        <button type="submit" class="btn btn-success">Sauvegarder</button>
+        <a href="{{ url_for('liste_livres') }}" class="btn btn-secondary"
+          >Annuler</a
+        >
+      </form>
+    </div>
+  </body>
+</html>

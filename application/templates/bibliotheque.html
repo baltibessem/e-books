@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Liste des Livres</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    {% if current_user.is_authenticated %} {% include 'navbar.html' %} {% else
+    %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="/">E-Books TN</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/bibliotheque">Bibliothèque des Livres</a>
+          </li>
+          {% if current_user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="#"
+              >Bienvenue, {{ current_user.username }}</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('logout') }}"
+              >Se déconnecter</a
+            >
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('login') }}">Se connecter</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('inscription') }}"
+              >S'inscrire</a
+            >
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
+    {% endif %}
+
+    <div class="container mt-5">
+      <h1>Bibliothèque</h1>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Titre</th>
+            <th>Auteur</th>
+            <th>Genre</th>
+            <th>Année de publication</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for livre in livres %}
+          <tr>
+            <td>{{ livre.titre }}</td>
+            <td>{{ livre.auteur }}</td>
+            <td>{{ livre.genre }}</td>
+            <td>{{ livre.annee_publication }}</td>
+            <td>{{ livre.statut }}</td>
+            <td>
+              {% if livre.statut == 'disponible' %}
+              <button
+                type="button"
+                class="btn btn-primary btn-sm"
+                data-toggle="modal"
+                data-target="#reservationModal{{ livre._id }}"
+              >
+                Réserver
+              </button>
+
+              <div
+                class="modal fade"
+                id="reservationModal{{ livre._id }}"
+                tabindex="-1"
+                role="dialog"
+                aria-labelledby="reservationModalLabel"
+                aria-hidden="true"
+              >
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="reservationModalLabel">
+                        Réserver un livre
+                      </h5>
+                      <button
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Close"
+                      >
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <form
+                      action="{{ url_for('reserver_livre', livre_id=livre._id) }}"
+                      method="POST"
+                    >
+                      <div class="modal-body">
+                        <div class="form-group">
+                          <label for="date_debut">Date de début</label>
+                          <input
+                            type="date"
+                            class="form-control"
+                            id="date_debut"
+                            name="date_debut"
+                            required
+                          />
+                        </div>
+                        <div class="form-group">
+                          <label for="date_fin">Date de fin</label>
+                          <input
+                            type="date"
+                            class="form-control"
+                            id="date_fin"
+                            name="date_fin"
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button
+                          type="button"
+                          class="btn btn-secondary"
+                          data-dismiss="modal"
+                        >
+                          Annuler
+                        </button>
+                        {% if livre.statut == 'disponible' %}
+                        <button
+                          class="btn btn-primary btn-sm"
+                          data-toggle="modal"
+                          data-target="#reservationModal{{ livre._id }}"
+                        >
+                          Réserver
+                        </button>
+                        {% elif livre.statut == 'réservé' %}
+                        <button class="btn btn-warning btn-sm" disabled>
+                          Réservé
+                        </button>
+                        {% endif %}
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              <form
+                action="{{ url_for('emprunter_livre', livre_id=livre._id) }}"
+                method="POST"
+                style="display: inline"
+              >
+                <button type="submit" class="btn btn-success btn-sm">
+                  Emprunter
+                </button>
+              </form>
+              {% elif livre.statut == 'réservé' %}
+              <button class="btn btn-warning btn-sm" disabled>Réservé</button>
+              {% elif livre.statut == 'emprunté' %}
+              <button class="btn btn-danger btn-sm" disabled>Emprunté</button>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
+</html>
